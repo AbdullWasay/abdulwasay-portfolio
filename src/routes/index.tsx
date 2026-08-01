@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 import { Backdrop, Cursor, ScrollProgress, Preloader } from "@/components/site/Atmosphere";
 import { Navbar } from "@/components/site/Navbar";
 import { CommandPalette } from "@/components/site/CommandPalette";
@@ -36,14 +37,16 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const [paletteOpen, setPaletteOpen] = useState(false);
+
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-background text-foreground">
       <Preloader />
       <Backdrop />
       <Cursor />
       <ScrollProgress />
-      <CommandPalette />
-      <Navbar />
+      <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
+      <Navbar onOpenPalette={() => setPaletteOpen(true)} />
       <main className="relative z-10">
         <Hero />
         <StackMarquee />
