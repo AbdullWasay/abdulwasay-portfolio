@@ -1,24 +1,68 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
+import { Backdrop, Cursor, ScrollProgress, Preloader } from "@/components/site/Atmosphere";
+import { Navbar } from "@/components/site/Navbar";
+import { CommandPalette } from "@/components/site/CommandPalette";
+import { Hero, StackMarquee } from "@/components/site/Hero";
+import {
+  StatsBar,
+  About,
+  Skills,
+  Projects,
+  Experience,
+  GithubPanel,
+  Services,
+  Testimonials,
+  Blog,
+} from "@/components/site/Sections";
+import { TerminalSection } from "@/components/site/Terminal";
+import { Contact, Footer } from "@/components/site/Contact";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
+const title = "Abdul Rahman — Full Stack Software Engineer";
+const description =
+  "Interactive portfolio of Abdul Rahman, full stack engineer building React, Next.js, Node.js and AWS products with an AI-powered assistant.";
+
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title },
+      { name: "description", content: description },
+      { property: "og:title", content: title },
+      { property: "og:description", content: description },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
+  const [paletteOpen, setPaletteOpen] = useState(false);
+
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+    <div className="relative min-h-screen overflow-x-hidden bg-background text-foreground">
+      <Preloader />
+      <Backdrop />
+      <Cursor />
+      <ScrollProgress />
+      <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
+      <Navbar onOpenPalette={() => setPaletteOpen(true)} />
+      <main className="relative z-10">
+        <Hero />
+        <StackMarquee />
+        <StatsBar />
+        <About />
+        <Skills />
+        <Projects />
+        <Experience />
+        <GithubPanel />
+        <Services />
+        <Testimonials />
+        <TerminalSection />
+        <Blog />
+        <Contact />
+      </main>
+      <Footer />
     </div>
   );
 }
