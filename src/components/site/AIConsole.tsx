@@ -4,6 +4,7 @@ import { DefaultChatTransport } from "ai";
 import { ArrowUp, RotateCcw } from "lucide-react";
 import { suggestions } from "@/data/portfolio";
 import { cn } from "@/lib/utils";
+import { TrafficLights } from "./MacWindow";
 
 function messageText(parts: Array<{ type: string; text?: string }>) {
   return parts
@@ -36,17 +37,15 @@ export function AIConsole() {
 
   return (
     <div className="group relative">
-      <div className="absolute -inset-px rounded-xl bg-accent/20 opacity-30 blur transition-opacity duration-700 group-focus-within:opacity-80" />
-      <div className="relative overflow-hidden rounded-xl border border-border bg-card/80 backdrop-blur-xl">
+      <div className="absolute -inset-px rounded-2xl bg-accent/20 opacity-30 blur transition-opacity duration-700 group-focus-within:opacity-80" />
+      <div className="relative overflow-hidden rounded-2xl border border-border/80 bg-card/75 shadow-[0_24px_80px_-24px_rgba(0,0,0,0.85)] backdrop-blur-xl">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-x-0 top-0 h-px animate-scanline bg-gradient-to-r from-transparent via-accent/60 to-transparent"
         />
-        <div className="flex items-center gap-3 border-b border-border px-5 py-3">
-          <span className="size-2 rounded-full bg-destructive/50" />
-          <span className="size-2 rounded-full bg-chart-4/50" />
-          <span className="size-2 rounded-full bg-accent/60" />
-          <span className="ml-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+        <div className="relative flex items-center gap-3 border-b border-border/70 bg-gradient-to-b from-secondary/70 to-secondary/20 px-4 py-2.5">
+          <TrafficLights />
+          <span className="pointer-events-none absolute inset-x-0 text-center font-mono text-[11px] tracking-wide text-foreground/80">
             portfolio_assistant.v1
           </span>
           {messages.length > 0 ? (

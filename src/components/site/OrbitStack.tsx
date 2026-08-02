@@ -1,6 +1,7 @@
 import { useState } from "react";
 import profileImg from "@/assets/profile.jpg";
 import { stack, profile } from "@/data/portfolio";
+import { TechIcon } from "./MacWindow";
 import { cn } from "@/lib/utils";
 
 const rings = [
@@ -69,13 +70,17 @@ export function OrbitStack() {
               onFocus={() => setHovered(tech.name)}
               aria-label={tech.name}
               className={cn(
-                "relative grid size-11 place-items-center rounded-lg border bg-background/90 font-mono text-[10px] transition-all duration-300",
+                "relative grid size-12 place-items-center rounded-xl border bg-background/80 backdrop-blur transition-all duration-300",
                 isActive
-                  ? "scale-125 border-accent text-accent accent-glow"
-                  : "border-border text-muted-foreground hover:border-accent/50",
+                  ? "scale-125 border-accent accent-glow"
+                  : "border-border/80 hover:border-accent/50",
               )}
             >
-              {tech.short}
+              <TechIcon
+                name={tech.name}
+                size={22}
+                className={cn("transition-all duration-300", isActive ? "opacity-100" : "opacity-70 saturate-[0.6]")}
+              />
               <span
                 className={cn(
                   "pointer-events-none absolute -bottom-8 whitespace-nowrap rounded border border-border bg-card px-2 py-1 font-mono text-[9px] uppercase tracking-widest text-foreground transition-opacity",
