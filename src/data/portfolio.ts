@@ -18,25 +18,33 @@ export const profile = {
 };
 
 export const stack = [
-  { name: "React", short: "RCT", ring: 0 },
-  { name: "Next.js", short: "NXT", ring: 0 },
-  { name: "TypeScript", short: "TS", ring: 0 },
-  { name: "Node.js", short: "NODE", ring: 0 },
-  { name: "Express", short: "EXP", ring: 0 },
-  { name: "Tailwind CSS", short: "TW", ring: 1 },
-  { name: "Redux", short: "RDX", ring: 1 },
-  { name: "Framer Motion", short: "MOT", ring: 1 },
-  { name: "MongoDB", short: "MNG", ring: 1 },
-  { name: "PostgreSQL", short: "PG", ring: 1 },
-  { name: "MySQL", short: "SQL", ring: 1 },
-  { name: "Prisma", short: "PRS", ring: 2 },
-  { name: "AWS", short: "AWS", ring: 2 },
-  { name: "Docker", short: "DKR", ring: 2 },
-  { name: "Git", short: "GIT", ring: 2 },
-  { name: "GitHub", short: "GH", ring: 2 },
-  { name: "Firebase", short: "FIR", ring: 2 },
-  { name: "Vercel", short: "VRC", ring: 2 },
+  { name: "React", short: "RCT", ring: 0, slug: "react" },
+  { name: "Next.js", short: "NXT", ring: 0, slug: "nextdotjs", color: "ffffff" },
+  { name: "TypeScript", short: "TS", ring: 0, slug: "typescript" },
+  { name: "Node.js", short: "NODE", ring: 0, slug: "nodedotjs" },
+  { name: "Express", short: "EXP", ring: 0, slug: "express", color: "ffffff" },
+  { name: "Tailwind CSS", short: "TW", ring: 1, slug: "tailwindcss" },
+  { name: "Redux", short: "RDX", ring: 1, slug: "redux" },
+  { name: "Framer Motion", short: "MOT", ring: 1, slug: "framer", color: "ffffff" },
+  { name: "MongoDB", short: "MNG", ring: 1, slug: "mongodb" },
+  { name: "PostgreSQL", short: "PG", ring: 1, slug: "postgresql" },
+  { name: "MySQL", short: "SQL", ring: 1, slug: "mysql" },
+  { name: "Prisma", short: "PRS", ring: 2, slug: "prisma", color: "ffffff" },
+  { name: "AWS", short: "AWS", ring: 2, slug: "amazonwebservices", color: "ff9900" },
+  { name: "Docker", short: "DKR", ring: 2, slug: "docker" },
+  { name: "Git", short: "GIT", ring: 2, slug: "git" },
+  { name: "GitHub", short: "GH", ring: 2, slug: "github", color: "ffffff" },
+  { name: "Firebase", short: "FIR", ring: 2, slug: "firebase" },
+  { name: "Vercel", short: "VRC", ring: 2, slug: "vercel", color: "ffffff" },
 ];
+
+export function techIconUrl(slug: string, color?: string) {
+  return `https://cdn.simpleicons.org/${slug}${color ? `/${color}` : ""}`;
+}
+
+export function techBySlug(name: string) {
+  return stack.find((tech) => tech.name.toLowerCase() === name.toLowerCase());
+}
 
 export const stats = [
   { label: "Contributions", value: 12400, display: "12.4k", accent: true },
