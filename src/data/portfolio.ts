@@ -30,7 +30,7 @@ export const stack = [
   { name: "PostgreSQL", short: "PG", ring: 1, slug: "postgresql" },
   { name: "MySQL", short: "SQL", ring: 1, slug: "mysql" },
   { name: "Prisma", short: "PRS", ring: 2, slug: "prisma", color: "ffffff" },
-  { name: "AWS", short: "AWS", ring: 2, slug: "amazonwebservices", color: "ff9900" },
+  { name: "AWS", short: "AWS", ring: 2, slug: "", color: "ff9900" },
   { name: "Docker", short: "DKR", ring: 2, slug: "docker" },
   { name: "Git", short: "GIT", ring: 2, slug: "git" },
   { name: "GitHub", short: "GH", ring: 2, slug: "github", color: "ffffff" },
