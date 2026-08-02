@@ -6,7 +6,7 @@ import { Backdrop, Cursor, ScrollProgress } from "@/components/site/Atmosphere";
 import { MacWindow, TechIcon, TrafficLights } from "@/components/site/MacWindow";
 import { Reveal, SectionHeading } from "@/components/site/primitives";
 import { Footer } from "@/components/site/Contact";
-import { projects, projectById } from "@/data/portfolio";
+import { projects, projectById, type Project } from "@/data/portfolio";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/projects/$projectId")({
@@ -34,7 +34,7 @@ export const Route = createFileRoute("/projects/$projectId")({
 });
 
 function ProjectCaseStudy() {
-  const { project } = Route.useLoaderData();
+  const { project } = Route.useLoaderData() as { project: Project };
   const [lightbox, setLightbox] = useState<number | null>(null);
   const index = projects.findIndex((item) => item.id === project.id);
   const next = projects[(index + 1) % projects.length]!;
