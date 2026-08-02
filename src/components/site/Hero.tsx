@@ -5,6 +5,7 @@ import { AIConsole } from "./AIConsole";
 import { OrbitStack } from "./OrbitStack";
 import { Magnetic } from "./primitives";
 import { profile, stack } from "@/data/portfolio";
+import { TechIcon } from "./MacWindow";
 
 const ctas = [
   { label: "Explore projects", href: "#projects", icon: ArrowRight, primary: true },
@@ -99,10 +100,11 @@ export function StackMarquee() {
         {items.map((tech, index) => (
           <span
             key={`${tech.name}-${index}`}
-            className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground"
+            className="inline-flex items-center gap-3 font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground"
           >
+            <TechIcon name={tech.name} size={16} className="opacity-70" />
             {tech.name}
-            <span className="ml-10 text-accent">/</span>
+            <span className="ml-7 text-accent">/</span>
           </span>
         ))}
       </div>

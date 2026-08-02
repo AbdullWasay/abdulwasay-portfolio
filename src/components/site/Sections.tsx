@@ -14,6 +14,8 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { Reveal, SectionHeading, Counter, Scramble } from "./primitives";
+import { TrafficLights, TechIcon } from "./MacWindow";
+import { Link } from "@tanstack/react-router";
 import {
   stats,
   timeline,
@@ -195,8 +197,14 @@ export function Projects() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.96 }}
               transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-              className="group relative overflow-hidden rounded-xl border border-border bg-card/60 transition-colors hover:border-accent/50"
+              className="group relative overflow-hidden rounded-2xl border border-border/80 bg-card/60 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.9)] backdrop-blur transition-all duration-500 hover:-translate-y-1 hover:border-accent/50"
             >
+              <div className="relative flex items-center gap-2 border-b border-border/70 bg-gradient-to-b from-secondary/70 to-secondary/20 px-3 py-2">
+                <TrafficLights />
+                <span className="pointer-events-none absolute inset-x-0 text-center font-mono text-[10px] tracking-wide text-foreground/70">
+                  {project.id}.app
+                </span>
+              </div>
               <div className="relative aspect-video overflow-hidden border-b border-border">
                 <img
                   src={project.image}
@@ -221,17 +229,26 @@ export function Projects() {
                   <span className="font-mono text-[10px] text-accent">{project.year}</span>
                 </div>
                 <p className="font-mono text-sm leading-relaxed text-muted-foreground">{project.blurb}</p>
-                <ul className="flex flex-wrap gap-2">
+                <ul className="flex flex-wrap items-center gap-2">
                   {project.tech.map((tech) => (
                     <li
                       key={tech}
-                      className="rounded bg-secondary px-2 py-0.5 font-mono text-[9px] uppercase text-muted-foreground"
+                      className="inline-flex items-center gap-1.5 rounded bg-secondary px-2 py-1 font-mono text-[9px] uppercase text-muted-foreground"
                     >
+                      <TechIcon name={tech} size={12} />
                       {tech}
                     </li>
                   ))}
                 </ul>
-                <div className="flex items-center gap-5 pt-2">
+                <Link
+                  to="/projects/$projectId"
+                  params={{ projectId: project.id }}
+                  className="inline-flex w-full items-center justify-between rounded-lg border border-accent/30 bg-accent/5 px-3 py-2 font-mono text-[11px] uppercase tracking-widest text-accent transition-colors hover:bg-accent hover:text-accent-foreground"
+                >
+                  Read case study
+                  <ArrowUpRight className="size-3.5" aria-hidden />
+                </Link>
+                <div className="flex items-center gap-5 pt-1">
                   <a
                     href={project.github}
                     className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-widest text-muted-foreground transition-colors hover:text-accent"
