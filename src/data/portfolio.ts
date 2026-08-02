@@ -147,8 +147,9 @@ export type Project = {
 import vortex from "@/assets/project-vortex.jpg";
 import cypher from "@/assets/project-cypher.jpg";
 import lens from "@/assets/project-lens.jpg";
+import { caseStudies } from "./case-studies";
 
-export const projects: Project[] = [
+const baseProjects = [
   {
     id: "vortex",
     name: "Vortex Protocol",
@@ -222,6 +223,15 @@ export const projects: Project[] = [
     demo: "https://example.com",
   },
 ];
+
+export const projects: Project[] = baseProjects.map((project) => ({
+  ...project,
+  ...(caseStudies[project.id as keyof typeof caseStudies] as unknown as Omit<Project, keyof typeof project>),
+}));
+
+export function projectById(id: string) {
+  return projects.find((project) => project.id === id);
+}
 
 export const projectFilters = ["All", "React", "Next.js", "Full Stack", "AI", "Node.js", "WordPress"];
 
