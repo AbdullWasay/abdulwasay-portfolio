@@ -67,10 +67,13 @@ export function TechIcon({
   size?: number;
 }) {
   const tech = techBySlug(name);
-  if (!tech) {
+  if (!tech || !tech.slug) {
     return (
-      <span className={cn("font-mono text-[9px] uppercase text-muted-foreground", className)}>
-        {name.slice(0, 3)}
+      <span
+        className={cn("font-mono text-[9px] font-bold uppercase tracking-tight text-accent", className)}
+        style={{ fontSize: Math.max(8, size * 0.42) }}
+      >
+        {(tech?.short ?? name.slice(0, 3)).slice(0, 4)}
       </span>
     );
   }
