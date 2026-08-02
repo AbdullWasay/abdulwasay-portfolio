@@ -133,6 +133,15 @@ export type Project = {
   image: string;
   github: string;
   demo: string;
+  tagline: string;
+  overview: string[];
+  details: { label: string; value: string }[];
+  challenges: { title: string; body: string; fix: string }[];
+  methodology: { phase: string; title: string; body: string }[];
+  stackGroups: { label: string; items: string[] }[];
+  achievements: string[];
+  outcomes: { metric: string; label: string; note: string }[];
+  gallery: { image: string; caption: string }[];
 };
 
 import vortex from "@/assets/project-vortex.jpg";
