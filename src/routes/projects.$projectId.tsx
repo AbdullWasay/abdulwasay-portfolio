@@ -46,7 +46,7 @@ function SectionRail({ active }: { active: string }) {
   return (
     <nav
       aria-label="Case study sections"
-      className="pointer-events-auto fixed left-6 top-1/2 z-30 hidden -translate-y-1/2 flex-col gap-3 xl:flex"
+      className="pointer-events-auto fixed left-6 top-1/2 z-30 hidden -translate-y-1/2 flex-col gap-3 2xl:flex"
     >
       {sections.map((section) => {
         const isActive = active === section.id;
