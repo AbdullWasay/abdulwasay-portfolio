@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
   ArrowUpRight,
@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { Reveal, SectionHeading, Counter, Scramble } from "./primitives";
 import { TrafficLights, TechIcon } from "./MacWindow";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import {
   stats,
   timeline,
@@ -91,47 +91,171 @@ export function About() {
 }
 
 export function Skills() {
+  const [active, setActive] = useState(0);
+  const [locked, setLocked] = useState(false);
+  const group = skillGroups[active]!;
+
+  useEffect(() => {
+    if (locked) return;
+    const id = window.setInterval(() => setActive((prev) => (prev + 1) % skillGroups.length), 4200);
+    return () => window.clearInterval(id);
+  }, [locked]);
+
+  const radius = 62;
+  const circumference = 2 * Math.PI * radius;
+
   return (
     <section id="skills" className="mx-auto max-w-7xl px-6 py-24">
       <SectionHeading
         eyebrow="Capability_matrix"
-        title="What I work with daily"
-        description="Six domains, each backed by production systems rather than tutorials."
+        title="Six domains, live telemetry"
+        description="Hover a channel to lock the readout. Each domain is backed by production systems, not tutorials."
       />
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {skillGroups.map((group, index) => (
-          <Reveal key={group.category} delay={index * 0.06}>
-            <article className="group relative h-full overflow-hidden rounded-xl border border-border bg-card/50 p-6 transition-all duration-500 hover:-translate-y-1 hover:border-accent/50">
-              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-              <div className="flex items-baseline justify-between">
-                <h3 className="text-lg font-bold text-foreground">
+
+      <div
+        onMouseEnter={() => setLocked(true)}
+        onMouseLeave={() => setLocked(false)}
+        className="grid gap-px overflow-hidden rounded-2xl border border-border bg-border lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)]"
+      >
+        {/* channel selector */}
+        <div className="bg-card/60">
+          {skillGroups.map((item, index) => {
+            const isActive = index === active;
+            return (
+              <button
+                key={item.category}
+                type="button"
+                onMouseEnter={() => setActive(index)}
+                onFocus={() => setActive(index)}
+                onClick={() => setActive(index)}
+                className={cn(
+                  "relative flex w-full items-center gap-4 border-b border-border/60 px-6 py-5 text-left transition-colors last:border-b-0",
+                  isActive ? "bg-accent/5" : "hover:bg-secondary/40",
+                )}
+              >
+                {isActive ? (
+                  <motion.span
+                    layoutId="capability-marker"
+                    className="absolute inset-y-0 left-0 w-[3px] bg-accent"
+                    transition={{ type: "spring", stiffness: 320, damping: 32 }}
+                  />
+                ) : null}
+                <span className="font-mono text-[10px] tabular-nums text-muted-foreground/60">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <span className="flex-1">
+                  <span
+                    className={cn(
+                      "block text-sm font-bold uppercase tracking-wide transition-colors",
+                      isActive ? "text-accent" : "text-foreground/80",
+                    )}
+                  >
+                    {item.category}
+                  </span>
+                  <span className="mt-1 flex h-3 items-end gap-[3px]" aria-hidden>
+                    {Array.from({ length: 22 }).map((_, bar) => (
+                      <motion.span
+                        key={bar}
+                        className={cn("w-[3px] rounded-sm", isActive ? "bg-accent" : "bg-border")}
+                        animate={{
+                          height: isActive
+                            ? [3, 4 + ((bar * 7) % 9), 3 + ((bar * 3) % 11), 4]
+                            : 3 + ((bar * 5) % 4),
+                        }}
+                        transition={
+                          isActive
+                            ? { duration: 1.6, repeat: Infinity, delay: bar * 0.04, ease: "easeInOut" }
+                            : { duration: 0.3 }
+                        }
+                      />
+                    ))}
+                  </span>
+                </span>
+                <span className="font-mono text-xs tabular-nums text-muted-foreground">{item.level}%</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* readout */}
+        <div className="relative overflow-hidden bg-background/60 p-8">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 opacity-[0.07]"
+            style={{
+              backgroundImage:
+                "linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px)",
+              backgroundSize: "28px 28px",
+            }}
+          />
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={group.category}
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+              className="relative flex flex-col gap-8 sm:flex-row sm:items-center"
+            >
+              <div className="relative grid size-[160px] shrink-0 place-items-center">
+                <svg viewBox="0 0 160 160" className="absolute inset-0 -rotate-90">
+                  <circle cx="80" cy="80" r={radius} fill="none" stroke="currentColor" strokeWidth="6" className="text-border" />
+                  <motion.circle
+                    cx="80"
+                    cy="80"
+                    r={radius}
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="6"
+                    strokeLinecap="round"
+                    className="text-accent"
+                    initial={{ strokeDashoffset: circumference }}
+                    animate={{ strokeDashoffset: circumference * (1 - group.level / 100) }}
+                    transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+                    style={{ strokeDasharray: circumference, filter: "drop-shadow(0 0 6px currentColor)" }}
+                  />
+                </svg>
+                <div className="text-center">
+                  <div className="font-mono text-3xl font-bold text-accent">
+                    <Counter key={group.category} to={group.level} suffix="%" />
+                  </div>
+                  <div className="font-mono text-[9px] uppercase tracking-[0.25em] text-muted-foreground">
+                    proficiency
+                  </div>
+                </div>
+              </div>
+
+              <div className="min-w-0 flex-1">
+                <h3 className="text-2xl font-bold text-foreground">
                   <Scramble text={group.category} />
                 </h3>
-                <span className="font-mono text-xs text-accent">{group.level}</span>
+                <p className="mt-2 max-w-[46ch] text-sm leading-relaxed text-muted-foreground">{group.note}</p>
+                <ul className="mt-6 grid gap-2 sm:grid-cols-2">
+                  {group.items.map((item, itemIndex) => (
+                    <motion.li
+                      key={item}
+                      initial={{ opacity: 0, x: -8 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.06 * itemIndex, duration: 0.3 }}
+                      className="flex items-center gap-2 rounded border border-border/70 bg-card/50 px-2.5 py-1.5 font-mono text-[10px] uppercase tracking-wider text-muted-foreground transition-colors hover:border-accent/50 hover:text-foreground"
+                    >
+                      <TechIcon name={item} size={13} />
+                      <span className="truncate">{item}</span>
+                    </motion.li>
+                  ))}
+                </ul>
               </div>
-              <p className="mt-2 text-sm text-muted-foreground">{group.note}</p>
-              <div className="mt-5 h-px w-full bg-border">
-                <motion.div
-                  className="h-px bg-accent"
-                  initial={{ width: 0 }}
-                  whileInView={{ width: `${group.level}%` }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
-                />
-              </div>
-              <ul className="mt-5 flex flex-wrap gap-2">
-                {group.items.map((item) => (
-                  <li
-                    key={item}
-                    className="rounded border border-border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-muted-foreground transition-colors group-hover:border-accent/30 group-hover:text-foreground"
-                  >
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </article>
-          </Reveal>
-        ))}
+            </motion.div>
+          </AnimatePresence>
+
+          <div className="relative mt-8 flex items-center justify-between border-t border-border/60 pt-4 font-mono text-[9px] uppercase tracking-[0.25em] text-muted-foreground">
+            <span>channel {String(active + 1).padStart(2, "0")}/{String(skillGroups.length).padStart(2, "0")}</span>
+            <span className="flex items-center gap-2">
+              <span className={cn("size-1.5 rounded-full", locked ? "bg-[#febc2e]" : "bg-accent animate-pulse")} />
+              {locked ? "locked" : "auto-scan"}
+            </span>
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -140,8 +264,12 @@ export function Skills() {
 export function Projects() {
   const [filter, setFilter] = useState("All");
   const [query, setQuery] = useState("");
+  const [closed, setClosed] = useState<string[]>([]);
+  const [minimised, setMinimised] = useState<string[]>([]);
+  const navigate = useNavigate();
 
   const visible = projects.filter((project) => {
+    if (closed.includes(project.id)) return false;
     const matchesFilter = filter === "All" || project.tags.includes(filter);
     const haystack = `${project.name} ${project.blurb} ${project.tech.join(" ")}`.toLowerCase();
     return matchesFilter && haystack.includes(query.toLowerCase());
@@ -185,6 +313,14 @@ export function Projects() {
             [ {item} ]
           </button>
         ))}
+        {closed.length > 0 ? (
+          <button
+            onClick={() => setClosed([])}
+            className="rounded border border-accent/50 bg-accent/10 px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-accent transition-colors hover:bg-accent hover:text-accent-foreground"
+          >
+            [ reopen {closed.length} window{closed.length > 1 ? "s" : ""} ]
+          </button>
+        ) : null}
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -200,11 +336,30 @@ export function Projects() {
               className="group relative overflow-hidden rounded-2xl border border-border/80 bg-card/60 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.9)] backdrop-blur transition-all duration-500 hover:-translate-y-1 hover:border-accent/50"
             >
               <div className="relative flex items-center gap-2 border-b border-border/70 bg-gradient-to-b from-secondary/70 to-secondary/20 px-3 py-2">
-                <TrafficLights />
+                <TrafficLights
+                  onClose={() => setClosed((prev) => [...prev, project.id])}
+                  onMinimize={() =>
+                    setMinimised((prev) =>
+                      prev.includes(project.id) ? prev.filter((id) => id !== project.id) : [...prev, project.id],
+                    )
+                  }
+                  onMaximize={() => navigate({ to: "/projects/$projectId", params: { projectId: project.id } })}
+                  labels={{
+                    close: `Close ${project.name}`,
+                    minimize: `${minimised.includes(project.id) ? "Restore" : "Minimise"} ${project.name}`,
+                    maximize: `Open ${project.name} case study`,
+                  }}
+                />
                 <span className="pointer-events-none absolute inset-x-0 text-center font-mono text-[10px] tracking-wide text-foreground/70">
                   {project.id}.app
                 </span>
               </div>
+              <motion.div
+                animate={{ height: minimised.includes(project.id) ? 0 : "auto", opacity: minimised.includes(project.id) ? 0 : 1 }}
+                initial={false}
+                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                className="overflow-hidden"
+              >
               <div className="relative aspect-video overflow-hidden border-b border-border">
                 <img
                   src={project.image}
@@ -263,6 +418,7 @@ export function Projects() {
                   </a>
                 </div>
               </div>
+              </motion.div>
             </motion.article>
           ))}
         </AnimatePresence>

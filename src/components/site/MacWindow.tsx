@@ -2,12 +2,57 @@ import type { ReactNode } from "react";
 import { techIconUrl, techBySlug } from "@/data/portfolio";
 import { cn } from "@/lib/utils";
 
-export function TrafficLights({ className }: { className?: string }) {
+export function TrafficLights({
+  className,
+  onClose,
+  onMinimize,
+  onMaximize,
+  labels,
+}: {
+  className?: string;
+  onClose?: () => void;
+  onMinimize?: () => void;
+  onMaximize?: () => void;
+  labels?: { close?: string; minimize?: string; maximize?: string };
+}) {
+  const interactive = Boolean(onClose || onMinimize || onMaximize);
+
+  if (!interactive) {
+    return (
+      <div className={cn("flex items-center gap-2", className)} aria-hidden>
+        <span className="size-3 rounded-full bg-[#ff5f57] shadow-[0_0_8px_rgba(255,95,87,0.45)]" />
+        <span className="size-3 rounded-full bg-[#febc2e] shadow-[0_0_8px_rgba(254,188,46,0.4)]" />
+        <span className="size-3 rounded-full bg-[#28c840] shadow-[0_0_8px_rgba(40,200,64,0.4)]" />
+      </div>
+    );
+  }
+
+  const lights = [
+    { color: "#ff5f57", glyph: "\u00d7", action: onClose, label: labels?.close ?? "Close" },
+    { color: "#febc2e", glyph: "\u2212", action: onMinimize, label: labels?.minimize ?? "Minimise" },
+    { color: "#28c840", glyph: "\u2197", action: onMaximize, label: labels?.maximize ?? "Open" },
+  ];
+
   return (
-    <div className={cn("flex items-center gap-2", className)} aria-hidden>
-      <span className="size-3 rounded-full bg-[#ff5f57] shadow-[0_0_8px_rgba(255,95,87,0.45)]" />
-      <span className="size-3 rounded-full bg-[#febc2e] shadow-[0_0_8px_rgba(254,188,46,0.4)]" />
-      <span className="size-3 rounded-full bg-[#28c840] shadow-[0_0_8px_rgba(40,200,64,0.4)]" />
+    <div className={cn("group/lights flex items-center gap-2", className)}>
+      {lights.map((light) => (
+        <button
+          key={light.color}
+          type="button"
+          aria-label={light.label}
+          title={light.label}
+          disabled={!light.action}
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            light.action?.();
+          }}
+          className="grid size-3 place-items-center rounded-full text-[8px] font-bold leading-none text-black/70 opacity-90 transition-transform hover:scale-125 active:scale-95 disabled:opacity-40"
+          style={{ backgroundColor: light.color, boxShadow: `0 0 8px ${light.color}66` }}
+        >
+          <span className="opacity-0 transition-opacity group-hover/lights:opacity-100">{light.glyph}</span>
+        </button>
+      ))}
     </div>
   );
 }
