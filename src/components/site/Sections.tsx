@@ -264,8 +264,12 @@ export function Skills() {
 export function Projects() {
   const [filter, setFilter] = useState("All");
   const [query, setQuery] = useState("");
+  const [closed, setClosed] = useState<string[]>([]);
+  const [minimised, setMinimised] = useState<string[]>([]);
+  const navigate = useNavigate();
 
   const visible = projects.filter((project) => {
+    if (closed.includes(project.id)) return false;
     const matchesFilter = filter === "All" || project.tags.includes(filter);
     const haystack = `${project.name} ${project.blurb} ${project.tech.join(" ")}`.toLowerCase();
     return matchesFilter && haystack.includes(query.toLowerCase());
@@ -309,6 +313,14 @@ export function Projects() {
             [ {item} ]
           </button>
         ))}
+        {closed.length > 0 ? (
+          <button
+            onClick={() => setClosed([])}
+            className="rounded border border-accent/50 bg-accent/10 px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-accent transition-colors hover:bg-accent hover:text-accent-foreground"
+          >
+            [ reopen {closed.length} window{closed.length > 1 ? "s" : ""} ]
+          </button>
+        ) : null}
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -324,11 +336,30 @@ export function Projects() {
               className="group relative overflow-hidden rounded-2xl border border-border/80 bg-card/60 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.9)] backdrop-blur transition-all duration-500 hover:-translate-y-1 hover:border-accent/50"
             >
               <div className="relative flex items-center gap-2 border-b border-border/70 bg-gradient-to-b from-secondary/70 to-secondary/20 px-3 py-2">
-                <TrafficLights />
+                <TrafficLights
+                  onClose={() => setClosed((prev) => [...prev, project.id])}
+                  onMinimize={() =>
+                    setMinimised((prev) =>
+                      prev.includes(project.id) ? prev.filter((id) => id !== project.id) : [...prev, project.id],
+                    )
+                  }
+                  onMaximize={() => navigate({ to: "/projects/$projectId", params: { projectId: project.id } })}
+                  labels={{
+                    close: `Close ${project.name}`,
+                    minimize: `${minimised.includes(project.id) ? "Restore" : "Minimise"} ${project.name}`,
+                    maximize: `Open ${project.name} case study`,
+                  }}
+                />
                 <span className="pointer-events-none absolute inset-x-0 text-center font-mono text-[10px] tracking-wide text-foreground/70">
                   {project.id}.app
                 </span>
               </div>
+              <motion.div
+                animate={{ height: minimised.includes(project.id) ? 0 : "auto", opacity: minimised.includes(project.id) ? 0 : 1 }}
+                initial={false}
+                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                className="overflow-hidden"
+              >
               <div className="relative aspect-video overflow-hidden border-b border-border">
                 <img
                   src={project.image}
@@ -387,6 +418,7 @@ export function Projects() {
                   </a>
                 </div>
               </div>
+              </motion.div>
             </motion.article>
           ))}
         </AnimatePresence>
