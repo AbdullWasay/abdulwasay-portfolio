@@ -146,7 +146,7 @@ export function AIConsole() {
           </div>
 
           <div className="mt-3 flex flex-wrap gap-2">
-            {suggestions.map((suggestion) => (
+            {suggestions.slice(0, 3).map((suggestion) => (
               <button
                 key={suggestion}
                 type="button"

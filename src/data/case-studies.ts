@@ -1,6 +1,6 @@
-import vortex from "@/assets/project-vortex.jpg";
-import cypher from "@/assets/project-cypher.jpg";
-import lens from "@/assets/project-lens.jpg";
+const vortex = "/assets/project-vortex.jpg";
+const cypher = "/assets/project-cypher.jpg";
+const lens = "/assets/project-lens.jpg";
 
 const images: Record<string, string> = { vortex, cypher, lens };
 
