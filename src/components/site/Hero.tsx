@@ -29,7 +29,7 @@ export function Hero() {
             </span>
             <h1 className="text-[clamp(2.9rem,9vw,6.5rem)] font-extrabold leading-[0.86] tracking-tighter">
               <span className="block text-beam">{profile.fullName}</span>
-              <span className="mt-1 block font-mono text-[clamp(0.7rem,1.6vw,1.05rem)] font-normal uppercase tracking-[0.42em] text-muted-foreground">
+              <span className="mt-5 block font-mono text-[clamp(0.7rem,1.6vw,1.05rem)] font-normal uppercase tracking-[0.42em] text-muted-foreground">
                 {profile.role}
               </span>
             </h1>
