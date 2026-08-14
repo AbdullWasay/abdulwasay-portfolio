@@ -144,9 +144,9 @@ export type Project = {
   gallery: { image: string; caption: string }[];
 };
 
-import vortex from "@/assets/project-vortex.jpg";
-import cypher from "@/assets/project-cypher.jpg";
-import lens from "@/assets/project-lens.jpg";
+const vortex = "/assets/project-vortex.jpg";
+const cypher = "/assets/project-cypher.jpg";
+const lens = "/assets/project-lens.jpg";
 import { caseStudies } from "./case-studies";
 
 const baseProjects = [

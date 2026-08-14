@@ -1,5 +1,5 @@
 import { useState } from "react";
-import profileImg from "@/assets/profile.jpg";
+const profileImg = "/assets/profile.jpg";
 import { stack, profile } from "@/data/portfolio";
 import { TechIcon } from "./MacWindow";
 import { cn } from "@/lib/utils";
