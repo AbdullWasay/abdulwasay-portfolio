@@ -301,7 +301,7 @@ export function SectionShell({
 }) {
   const palette = WASHES[wash];
   return (
-    <section id={id} className={cn("relative overflow-hidden", dense ? "py-14" : "py-20 md:py-24", className)}>
+    <section id={id} className={cn("relative overflow-hidden", dense ? "py-14" : "py-16 sm:py-20 md:py-24", className)}>
       <div aria-hidden className="pointer-events-none absolute inset-0">
         <div
           className={cn(
@@ -320,11 +320,11 @@ export function SectionShell({
         <div className="absolute inset-x-0 top-0 flex items-center justify-center">
           <div className="h-px w-full max-w-7xl bg-gradient-to-r from-transparent via-[#64748b]/55 to-transparent" />
         </div>
-        <div className="absolute inset-x-0 top-0 mx-auto flex max-w-7xl justify-center px-6">
+        <div className="absolute inset-x-0 top-0 mx-auto flex max-w-7xl justify-center px-4 sm:px-6">
           <div className="h-px w-16 bg-[#818cf8]/50" />
         </div>
       </div>
-      <div className="relative z-10 mx-auto max-w-7xl px-6">
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6">
         <TextRise>{children}</TextRise>
       </div>
     </section>
@@ -353,7 +353,7 @@ export function SectionHeading({
             </span>
           </TextRise>
           <TextRise y={52} delay={0.06}>
-            <h2 className="text-balance text-3xl font-semibold tracking-tight text-foreground sm:text-4xl md:text-[2.85rem] md:leading-[1.05]">
+            <h2 className="text-balance text-[1.7rem] font-semibold tracking-tight text-foreground sm:text-4xl md:text-[2.85rem] md:leading-[1.05]">
               {title}
             </h2>
           </TextRise>

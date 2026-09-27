@@ -189,6 +189,8 @@ export type Project = {
  featured?: boolean;
  /** Full-stack product builds vs marketing/static sites. */
  kind: "fullstack" | "static";
+ /** Side / personal builds, shown in a separate projects lane. */
+ personal?: boolean;
  /** Company/client work, show contribution only, hide live demo & build story. */
  contributionOnly?: boolean;
  features: string[];
@@ -366,7 +368,8 @@ const baseProjects = [
  name: "Empowered-AI",
  year: "2025",
  kind: "fullstack",
- blurb: "Flutter accessibility app for the visually impaired: fine-tuned YOLO object detection, scene description, OCR, emotion detection, currency detection, color recognition, item locator, and voice feedback via a Flask AI backend.",
+ personal: true,
+ blurb: "Personal Flutter accessibility app for the visually impaired: fine-tuned YOLO object detection, scene description, OCR, emotion detection, currency detection, color recognition, item locator, and voice feedback via a Flask AI backend.",
  features: [
  "Flutter mobile client with voice commands and audio feedback",
  "Fine-tuned YOLO model for real-time object detection",
@@ -438,7 +441,8 @@ export function projectById(id: string) {
 
 export const featuredProject = projects.find((p) => p.featured) ?? projects[0]!;
 
-export const fullstackProjects = projects.filter((p) => p.kind === "fullstack");
+export const fullstackProjects = projects.filter((p) => p.kind === "fullstack" && !p.personal);
+export const personalProjects = projects.filter((p) => p.personal);
 export const staticProjects = projects.filter((p) => p.kind === "static");
 
 export const projectFilters = ["All", "React", "Next.js", "Full Stack", "AI", "Node.js", "WordPress"];

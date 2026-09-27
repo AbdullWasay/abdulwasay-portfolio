@@ -782,7 +782,7 @@ function ProjectCaseStudy() {
  <SectionRail active={active} items={railSections} />
 
  <header className="sticky top-0 z-40 overflow-visible border-b border-border/50 bg-background/75 backdrop-blur-xl">
- <div className="mx-auto flex max-w-6xl items-center gap-4 px-6 py-3">
+ <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3 sm:gap-4 sm:px-6">
  <Link
  to="/"
  hash="projects"
@@ -813,14 +813,14 @@ function ProjectCaseStudy() {
  </div>
  </header>
 
- <main className="relative z-10 mx-auto max-w-6xl px-6 pb-24 pt-14">
+ <main className="relative z-10 mx-auto max-w-6xl px-4 pb-20 pt-10 sm:px-6 sm:pb-24 sm:pt-14">
  {/* Hero */}
  {project.id === "empoweredai" ? (
  <div className="grid items-start gap-10 lg:grid-cols-2 lg:gap-12">
  <div className="space-y-6">
  <Reveal className="space-y-4">
  <span className="inline-flex items-center gap-2 rounded-full border border-accent/25 bg-accent/5 px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-accent">
- Case study · {project.year}
+ Personal project · {project.year}
  </span>
  <ProjectTitle text={project.name} />
  <TypedTagline text={project.tagline} />

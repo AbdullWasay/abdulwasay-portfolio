@@ -101,7 +101,7 @@ export function Footer() {
             "radial-gradient(ellipse at 20% 0%, rgba(56,189,248,0.12), transparent 45%), radial-gradient(ellipse at 90% 100%, rgba(167,139,250,0.1), transparent 40%)",
         }}
       />
-      <div className="relative mx-auto max-w-7xl px-6 py-14 md:py-16">
+      <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 md:py-16">
         <TextRise>
         <div className="grid gap-10 md:grid-cols-[1.3fr_1fr_1fr]">
           <div>

@@ -15,6 +15,7 @@ import {
  workflowTools,
  featuredProject,
  fullstackProjects,
+ personalProjects,
  staticProjects,
  experience,
  education,
@@ -110,7 +111,7 @@ export function Skills() {
  onFocus={() => setActive(index)}
  onClick={() => setActive(index)}
  className={cn(
- "relative flex w-full items-center gap-4 border-b border-border/60 px-6 py-5 text-left transition-colors last:border-b-0",
+ "relative flex w-full items-center gap-3 border-b border-border/60 px-4 py-4 text-left transition-colors last:border-b-0 sm:gap-4 sm:px-6 sm:py-5",
  isActive ? "bg-accent/5" : "hover:bg-secondary/40",
  )}
  >
@@ -246,7 +247,7 @@ export function Projects() {
  <SectionHeading
  eyebrow="Selected work"
  title="Products I've shipped"
- description="Full-stack platforms first, databases, auth, payments, admin, then a few marketing and static sites."
+ description="Client and production platforms first, then a personal build, then a few marketing sites."
  />
 
  {/* Full-stack highlight */}
@@ -348,6 +349,30 @@ export function Projects() {
  ))}
  </div>
 
+ {personalProjects.length > 0 ? (
+ <div className="mt-16 border-t border-dashed border-border/70 pt-12">
+ <div className="mb-6 flex items-end justify-between gap-4">
+ <div>
+ <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+ Personal project
+ </p>
+ <p className="mt-1 max-w-xl text-sm text-muted-foreground">
+ Side work outside client delivery, kept separate from the production builds above.
+ </p>
+ </div>
+ <span className="hidden font-mono text-[10px] uppercase tracking-widest text-muted-foreground sm:block">
+ {personalProjects.length === 1 ? "1 build" : `${personalProjects.length} builds`}
+ </span>
+ </div>
+
+ <div className="grid gap-5 sm:grid-cols-2 lg:max-w-xl">
+ {personalProjects.map((project, index) => (
+ <PersonalCard key={project.id} project={project} index={index} />
+ ))}
+ </div>
+ </div>
+ ) : null}
+
  {/* Static / marketing, secondary */}
  {staticProjects.length > 0 ? (
  <div className="mt-16 border-t border-border/60 pt-12">
@@ -373,6 +398,61 @@ export function Projects() {
  </div>
  ) : null}
  </SectionShell>
+ );
+}
+
+function PersonalCard({ project, index }: { project: Project; index: number }) {
+ return (
+ <motion.div
+ initial={{ opacity: 0, y: 36 }}
+ whileInView={{ opacity: 1, y: 0 }}
+ viewport={{ once: true, amount: 0.3 }}
+ transition={{ duration: 0.65, delay: index * 0.06, ease: [0.16, 1, 0.3, 1] }}
+ >
+ <Link
+ to="/projects/$projectId"
+ params={{ projectId: project.id }}
+ className="group flex h-full flex-col overflow-hidden rounded-2xl border border-dashed border-border bg-card/70 transition-colors hover:border-foreground/25 hover:bg-card"
+ >
+ <div className="relative aspect-[3/4] overflow-hidden border-b border-border/70 bg-secondary sm:aspect-[4/5]">
+ <img
+ src={project.image}
+ alt={`${project.name} poster`}
+ loading="lazy"
+ width={800}
+ height={1000}
+ className="size-full object-contain object-top p-3 transition-transform duration-700 group-hover:scale-[1.02] sm:p-4"
+ />
+ <span className="absolute left-3 top-3 rounded-md border border-border/80 bg-background/90 px-2 py-0.5 font-mono text-[10px] uppercase tracking-widest text-muted-foreground backdrop-blur-sm">
+ Personal
+ </span>
+ </div>
+ <div className="flex flex-1 flex-col gap-3 p-5 sm:p-6">
+ <div className="flex items-start justify-between gap-3">
+ <h3 className="text-lg font-semibold tracking-tight text-foreground">{project.name}</h3>
+ <span className="shrink-0 text-xs text-muted-foreground">{project.year}</span>
+ </div>
+ <p className="line-clamp-3 text-sm leading-relaxed text-muted-foreground">{project.blurb}</p>
+ <ul className="mt-auto flex flex-wrap gap-1.5">
+ {project.tech.slice(0, 4).map((tech) => (
+ <li
+ key={tech}
+ className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background/50 px-2 py-0.5 text-[11px] text-muted-foreground"
+ >
+ <TechIcon name={tech} size={11} />
+ {tech}
+ </li>
+ ))}
+ </ul>
+ <div className="flex items-center gap-4 border-t border-border/70 pt-4">
+ <span className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground transition-colors group-hover:text-accent">
+ View project
+ <ArrowUpRight className="size-3.5" aria-hidden />
+ </span>
+ </div>
+ </div>
+ </Link>
+ </motion.div>
  );
 }
 
