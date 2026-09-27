@@ -5,22 +5,20 @@ import { Navbar } from "@/components/site/Navbar";
 import { CommandPalette } from "@/components/site/CommandPalette";
 import { Hero, StackMarquee } from "@/components/site/Hero";
 import {
-  StatsBar,
   About,
   Skills,
   Projects,
   Experience,
-  GithubPanel,
-  Services,
-  Testimonials,
-  Blog,
+  Education,
+  Toolkit,
+  GithubHandle,
 } from "@/components/site/Sections";
-import { TerminalSection } from "@/components/site/Terminal";
+import { ChatSection } from "@/components/site/Terminal";
 import { Contact, Footer } from "@/components/site/Contact";
 
-const title = "Abdul Rahman — Full Stack Software Engineer";
+const title = "Abdul Wasay - Software Engineer";
 const description =
-  "Interactive portfolio of Abdul Rahman, full stack engineer building React, Next.js, Node.js and AWS products with an AI-powered assistant.";
+  "Portfolio of Abdul Wasay - full-stack software engineer building production web apps with React, Next.js, Node.js, and AWS.";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -40,7 +38,7 @@ function Index() {
   const [paletteOpen, setPaletteOpen] = useState(false);
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-background text-foreground">
+    <div className="relative min-h-screen bg-background text-foreground">
       <Preloader />
       <Backdrop />
       <Cursor />
@@ -50,16 +48,14 @@ function Index() {
       <main className="relative z-10">
         <Hero />
         <StackMarquee />
-        <StatsBar />
         <About />
         <Skills />
-        <Projects />
         <Experience />
-        <GithubPanel />
-        <Services />
-        <Testimonials />
-        <TerminalSection />
-        <Blog />
+        <Projects />
+        <Education />
+        <Toolkit />
+        <GithubHandle />
+        <ChatSection />
         <Contact />
       </main>
       <Footer />

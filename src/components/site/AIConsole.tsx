@@ -1,164 +1,206 @@
 import { useEffect, useRef, useState } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
-import { ArrowUp, RotateCcw } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
+import { ArrowUp, RotateCcw, Sparkles } from "lucide-react";
 import { suggestions } from "@/data/portfolio";
 import { cn } from "@/lib/utils";
-import { TrafficLights } from "./MacWindow";
 
 function messageText(parts: Array<{ type: string; text?: string }>) {
-  return parts
-    .filter((part) => part.type === "text")
-    .map((part) => part.text ?? "")
-    .join("");
+ return parts
+ .filter((part) => part.type === "text")
+ .map((part) => part.text ?? "")
+ .join("")
+ .replace(/\*\*([^*]+)\*\*/g, "$1")
+ .replace(/\*([^*]+)\*/g, "$1")
+ .replace(/`([^`]+)`/g, "$1");
 }
 
-export function AIConsole() {
-  const [input, setInput] = useState("");
-  const inputRef = useRef<HTMLInputElement>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
+const chips = [
+ { label: "Projects", ask: suggestions[0]! },
+ { label: "Stack", ask: suggestions[1]! },
+ { label: "Availability", ask: suggestions[2]! },
+];
 
-  const { messages, sendMessage, status, error, setMessages } = useChat({
-    transport: new DefaultChatTransport({ api: "/api/chat" }),
-  });
+export function AIConsole({ variant = "hero" }: { variant?: "hero" | "page" }) {
+ const [input, setInput] = useState("");
+ const inputRef = useRef<HTMLInputElement>(null);
+ const scrollRef = useRef<HTMLDivElement>(null);
+ const page = variant === "page";
 
-  const busy = status === "submitted" || status === "streaming";
+ const { messages, sendMessage, status, error, setMessages } = useChat({
+ transport: new DefaultChatTransport({ api: "/api/chat" }),
+ });
 
-  useEffect(() => {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-  }, [messages, status]);
+ const busy = status === "submitted" || status === "streaming";
+ const idle = messages.length === 0 && !busy && !error;
 
-  const ask = (text: string) => {
-    if (!text.trim() || busy) return;
-    void sendMessage({ text: text.trim() });
-    setInput("");
-    inputRef.current?.focus();
-  };
+ useEffect(() => {
+ scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
+ }, [messages, status]);
 
-  return (
-    <div className="group relative">
-      <div className="absolute -inset-px rounded-2xl bg-accent/20 opacity-30 blur transition-opacity duration-700 group-focus-within:opacity-80" />
-      <div className="relative overflow-hidden rounded-2xl border border-border/80 bg-card/75 shadow-[0_24px_80px_-24px_rgba(0,0,0,0.85)] backdrop-blur-xl">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 h-px animate-scanline bg-gradient-to-r from-transparent via-accent/60 to-transparent"
-        />
-        <div className="relative flex items-center gap-3 border-b border-border/70 bg-gradient-to-b from-secondary/70 to-secondary/20 px-4 py-2.5">
-          <TrafficLights />
-          <span className="pointer-events-none absolute inset-x-0 text-center font-mono text-[11px] tracking-wide text-foreground/80">
-            portfolio_assistant.v1
-          </span>
-          {messages.length > 0 ? (
-            <button
-              onClick={() => setMessages([])}
-              className="ml-auto flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-muted-foreground transition-colors hover:text-accent"
-            >
-              <RotateCcw className="size-3" aria-hidden /> reset
-            </button>
-          ) : null}
-        </div>
+ const ask = (text: string) => {
+ if (!text.trim() || busy) return;
+ void sendMessage({ text: text.trim() });
+ setInput("");
+ inputRef.current?.focus();
+ };
 
-        <div ref={scrollRef} className="max-h-72 space-y-4 overflow-y-auto px-5 py-5">
-          {messages.length === 0 ? (
-            <div className="flex gap-3">
-              <span className="grid size-7 shrink-0 place-items-center rounded bg-accent/10 font-mono text-[10px] text-accent">
-                AI
-              </span>
-              <p className="font-mono text-sm leading-relaxed text-muted-foreground">
-                Ask anything about me — experience, projects, stack, or availability.
-                <span className="ml-1 inline-block h-4 w-2 translate-y-0.5 animate-blink bg-accent" />
-              </p>
-            </div>
-          ) : null}
+ return (
+ <div className={cn("w-full", page ? "mx-auto" : "mx-auto max-w-xl")}>
+ <div
+ className={cn(
+ "overflow-hidden bg-card/90 backdrop-blur-sm",
+ page
+ ? "rounded-[1.2rem] border-0 shadow-none"
+ : "rounded-xl border border-border shadow-sm",
+ )}
+ >
+ <div className="flex items-center justify-between border-b border-border px-4 py-3 sm:px-5">
+ <div className="flex items-center gap-2">
+ <span className="grid size-7 place-items-center rounded-full bg-accent/15">
+ <Sparkles className="size-3.5 text-accent" aria-hidden />
+ </span>
+ <div>
+ <p className="text-sm font-medium text-foreground">Ask Abdul</p>
+ {page ? (
+ <p className="text-[11px] text-muted-foreground">Projects, stack, experience, availability</p>
+ ) : null}
+ </div>
+ </div>
+ {messages.length > 0 ? (
+ <button
+ type="button"
+ onClick={() => setMessages([])}
+ aria-label="Reset chat"
+ className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-xs text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground"
+ >
+ <RotateCcw className="size-3.5" aria-hidden />
+ Reset
+ </button>
+ ) : null}
+ </div>
 
-          {messages.map((message) => (
-            <div
-              key={message.id}
-              className={cn("flex gap-3", message.role === "user" ? "justify-end" : "justify-start")}
-            >
-              {message.role === "assistant" ? (
-                <span className="grid size-7 shrink-0 place-items-center rounded bg-accent/10 font-mono text-[10px] text-accent">
-                  AI
-                </span>
-              ) : null}
-              <p
-                className={cn(
-                  "max-w-[85%] whitespace-pre-wrap text-sm leading-relaxed",
-                  message.role === "user"
-                    ? "rounded-lg bg-accent px-3 py-2 font-medium text-accent-foreground"
-                    : "font-mono text-foreground/90",
-                )}
-              >
-                {messageText(message.parts as Array<{ type: string; text?: string }>)}
-              </p>
-            </div>
-          ))}
+ <div className={cn("px-4 pb-4 pt-3 sm:px-5", page && "pb-5 pt-4")}>
+ <div
+ ref={scrollRef}
+ data-lenis-prevent
+ className={cn(
+ "mb-3 space-y-2.5 overflow-y-auto",
+ page ? "min-h-[320px] max-h-[480px]" : "max-h-44 sm:max-h-52",
+ )}
+ >
+ <AnimatePresence mode="popLayout">
+ {idle ? (
+ <motion.div
+ key="idle"
+ initial={{ opacity: 0 }}
+ animate={{ opacity: 1 }}
+ exit={{ opacity: 0 }}
+ className={cn("space-y-3", page ? "py-8 text-center" : "py-2 text-center")}
+ >
+ <p className="text-sm text-muted-foreground">
+ Ask about projects, stack, or availability
+ </p>
+ {page ? (
+ <div className="flex flex-wrap items-center justify-center gap-2">
+ {chips.map((chip) => (
+ <button
+ key={chip.label}
+ type="button"
+ onClick={() => ask(chip.ask)}
+ className="rounded-full border border-border px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:border-accent/40 hover:text-foreground"
+ >
+ {chip.label}
+ </button>
+ ))}
+ </div>
+ ) : null}
+ </motion.div>
+ ) : null}
 
-          {status === "submitted" ? (
-            <div className="flex items-center gap-3">
-              <span className="grid size-7 shrink-0 place-items-center rounded bg-accent/10 font-mono text-[10px] text-accent">
-                AI
-              </span>
-              <span className="flex items-center gap-1.5 font-mono text-xs uppercase tracking-widest text-muted-foreground">
-                thinking
-                <span className="size-1 animate-bounce rounded-full bg-accent [animation-delay:-0.2s]" />
-                <span className="size-1 animate-bounce rounded-full bg-accent [animation-delay:-0.1s]" />
-                <span className="size-1 animate-bounce rounded-full bg-accent" />
-              </span>
-            </div>
-          ) : null}
+ {messages.map((message) => (
+ <motion.div
+ key={message.id}
+ layout
+ initial={{ opacity: 0, y: 6 }}
+ animate={{ opacity: 1, y: 0 }}
+ className={cn("flex", message.role === "user" ? "justify-end" : "justify-start")}
+ >
+ <p
+ className={cn(
+ "max-w-[90%] whitespace-pre-wrap text-sm leading-relaxed",
+ message.role === "user"
+ ? "rounded-2xl rounded-br-md bg-accent px-3.5 py-2.5 text-accent-foreground"
+ : "rounded-2xl rounded-bl-md bg-white/[0.05] px-3.5 py-2.5 text-foreground/90",
+ )}
+ >
+ {messageText(message.parts as Array<{ type: string; text?: string }>)}
+ </p>
+ </motion.div>
+ ))}
+ </AnimatePresence>
 
-          {error ? (
-            <p className="font-mono text-xs text-destructive">
-              Assistant unavailable right now. Try again in a moment.
-            </p>
-          ) : null}
-        </div>
+ {status === "submitted" ? (
+ <div className="flex justify-start">
+ <span className="flex items-center gap-1.5 rounded-2xl bg-white/[0.05] px-3 py-2.5 text-xs text-muted-foreground">
+ <span className="size-1.5 animate-bounce rounded-full bg-muted-foreground [animation-delay:-0.2s]" />
+ <span className="size-1.5 animate-bounce rounded-full bg-muted-foreground [animation-delay:-0.1s]" />
+ <span className="size-1.5 animate-bounce rounded-full bg-muted-foreground" />
+ </span>
+ </div>
+ ) : null}
 
-        <form
-          onSubmit={(event) => {
-            event.preventDefault();
-            ask(input);
-          }}
-          className="border-t border-border px-5 py-4"
-        >
-          <div className="relative">
-            <label htmlFor="ai-input" className="sr-only">
-              Ask anything about Abdul
-            </label>
-            <input
-              id="ai-input"
-              ref={inputRef}
-              value={input}
-              onChange={(event) => setInput(event.target.value)}
-              placeholder="Ask anything about me..."
-              autoComplete="off"
-              className="w-full rounded-lg border border-border bg-secondary/50 px-4 py-3 pr-12 font-mono text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-accent/60"
-            />
-            <button
-              type="submit"
-              disabled={busy || !input.trim()}
-              aria-label="Send question"
-              className="absolute right-2 top-1/2 grid size-8 -translate-y-1/2 place-items-center rounded-md bg-accent text-accent-foreground transition-opacity disabled:opacity-30"
-            >
-              <ArrowUp className="size-4" aria-hidden />
-            </button>
-          </div>
+ {error ? <p className="text-center text-xs text-destructive">Unavailable, try again.</p> : null}
+ </div>
 
-          <div className="mt-3 flex flex-wrap gap-2">
-            {suggestions.slice(0, 3).map((suggestion) => (
-              <button
-                key={suggestion}
-                type="button"
-                onClick={() => ask(suggestion)}
-                className="rounded border border-border px-2 py-1 font-mono text-[10px] text-muted-foreground transition-colors hover:border-accent hover:text-accent"
-              >
-                [ {suggestion} ]
-              </button>
-            ))}
-          </div>
-        </form>
-      </div>
-    </div>
-  );
+ <form
+ onSubmit={(event) => {
+ event.preventDefault();
+ ask(input);
+ }}
+ className="space-y-2.5"
+ >
+ <div className="relative">
+ <label htmlFor={`ai-input-${variant}`} className="sr-only">
+ Ask about Abdul
+ </label>
+ <input
+ id={`ai-input-${variant}`}
+ ref={inputRef}
+ value={input}
+ onChange={(event) => setInput(event.target.value)}
+ placeholder="Ask anything…"
+ autoComplete="off"
+ className="w-full rounded-xl border border-border bg-background/60 py-3 pl-4 pr-12 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground/60 focus:border-accent/50"
+ />
+ <button
+ type="submit"
+ disabled={busy || !input.trim()}
+ aria-label="Send"
+ className="absolute right-1.5 top-1/2 grid size-9 -translate-y-1/2 place-items-center rounded-lg bg-foreground text-background transition-opacity disabled:opacity-25"
+ >
+ <ArrowUp className="size-4" aria-hidden />
+ </button>
+ </div>
+
+ {!page ? (
+ <div className="flex flex-wrap items-center justify-center gap-2">
+ {chips.map((chip) => (
+ <button
+ key={chip.label}
+ type="button"
+ onClick={() => ask(chip.ask)}
+ className="rounded-full border border-border px-2.5 py-1 text-xs text-muted-foreground transition-colors hover:border-foreground/25 hover:text-foreground"
+ >
+ {chip.label}
+ </button>
+ ))}
+ </div>
+ ) : null}
+ </form>
+ </div>
+ </div>
+ </div>
+ );
 }

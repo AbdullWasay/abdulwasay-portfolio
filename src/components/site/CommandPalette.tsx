@@ -9,7 +9,8 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { sections } from "./Navbar";
-import { profile } from "@/data/portfolio";
+import { profile, resumeDownloadName, resumeUrl } from "@/data/portfolio";
+import { scrollToTarget } from "@/lib/scroll";
 
 export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   useEffect(() => {
@@ -25,7 +26,7 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
 
   const go = (id: string) => {
     onOpenChange(false);
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    window.setTimeout(() => scrollToTarget(id), 40);
   };
 
   return (
@@ -51,20 +52,20 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
           >
             Copy email address
           </CommandItem>
-          <CommandItem value="Ask the AI assistant" onSelect={() => go("home")}>
-            Ask the AI assistant
-          </CommandItem>
-          <CommandItem value="Open terminal" onSelect={() => go("terminal")}>
-            Open the live terminal
+          <CommandItem value="Ask the AI assistant" onSelect={() => go("chat")}>
+            Open the portfolio chat
           </CommandItem>
           <CommandItem
-            value="Download resume"
+            value="Download CV"
             onSelect={() => {
-              toast.info("Resume", { description: "Attach your PDF to enable the download." });
+              const link = document.createElement("a");
+              link.href = resumeUrl;
+              link.download = resumeDownloadName;
+              link.click();
               onOpenChange(false);
             }}
           >
-            Download resume
+            Download CV
           </CommandItem>
         </CommandGroup>
       </CommandList>
